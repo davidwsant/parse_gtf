@@ -192,7 +192,16 @@ if max_transcript_length:
 	longest_transcript_df = transcripts.apply(find_longest, column_name = "Transcript Length", lengths_dict = transcript_lengths_dict, axis = 1)
 	longest_transcript_df = longest_transcript_df[longest_transcript_df['Longest'] == True]
 	longest_transcript_df = longest_transcript_df[longest_transcript_df.columns[:-1]]
-	longest_transcript_df.to_csv(longest_transcript_output)
+	### Some of them have multiple transcripts with the same length. I am going to just take the first entry for those ones.
+	gene_ids = longest_transcript_df["gene_id"]
+	bool_duplicates = dict(gene_ids.duplicated("first"))
+	duplicate_results = {}
+	for entry in bool_duplicates:
+		if bool_duplicates[entry]: # If it comes back as true
+			duplicate_results[entry] = bool_duplicates[entry]
+	dup_indexes = list(duplicate_results.keys()) # This is the indexes of the ones that returned "True"
+	updated_df = longest_transcript_df.drop(dup_indexes)
+	updated_df.to_csv(longest_transcript_output)
 
 if max_exonic_length:
 	longest_coding_output = prefix+"_Longest_Exonic_Length.csv"
@@ -201,4 +210,13 @@ if max_exonic_length:
 	longest_exonic_df = transcripts.apply(find_longest, column_name = "Exonic Length", lengths_dict = exonic_lengths_dict, axis = 1)
 	longest_exonic_df = longest_exonic_df[longest_exonic_df['Longest'] == True]
 	longest_exonic_df = longest_exonic_df[longest_exonic_df.columns[:-1]]
-	longest_exonic_df.to_csv(longest_coding_output)
+	### Some of them have multiple transcripts with the same exonic length. I am going to just take the first entry for those ones.
+	gene_ids = longest_exonic_df["gene_id"]
+	bool_duplicates = dict(gene_ids.duplicated("first"))
+	duplicate_results = {}
+	for entry in bool_duplicates:
+		if bool_duplicates[entry]: # If it comes back as true
+			duplicate_results[entry] = bool_duplicates[entry]
+	dup_indexes = list(duplicate_results.keys()) # This is the indexes of the ones that returned "True"
+	updated_df = longest_exonic_df.drop(dup_indexes)
+	updated_df.to_csv(longest_coding_output)
