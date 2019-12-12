@@ -107,48 +107,18 @@ def parse_transcript_info(df):
 	# transcript_source # I am just going to use the gene source
 	tag = None
 	transcript_support_level = None
-	gene_id_search = re.search(r'gene_id \"(.+?)\";', info) #the ? makes it non-greedy
-	if gene_id_search != None:
-		gene_id = gene_id_search.group(1)
-	gene_version_search = re.search(r'gene_version \"(.+?)\";', info)
-	if gene_version_search != None:
-		gene_version = gene_version_search.group(1)
-	transcript_id_search = re.search(r'transcript_id \"(.+?)\";', info)
-	if transcript_id_search != None:
-		transcript_id = transcript_id_search.group(1)
-	transcript_version_search = re.search(r'transcript_version \"(.+?)\";', info)
-	if transcript_version_search != None:
-		transcript_version = transcript_version_search.group(1)
-	gene_name_search = re.search(r'gene_name \"(.+?)\";', info)
-	if gene_name_search != None:
-		gene_name = gene_name_search.group(1)
-	gene_biotype_search = re.search(r'gene_biotype \"(.+?)\";', info)
-	if gene_biotype_search != None:
-		gene_biotype = gene_biotype_search.group(1)
-	transcript_name_search = re.search(r'transcript_name \"(.+?)\";', info)
-	if transcript_name_search != None:
-		transcript_name = transcript_name_search.group(1)
-	transcript_biotype_search = re.search(r'transcript_biotype \"(.+?)\";', info)
-	if transcript_biotype_search != None:
-		transcript_biotype = transcript_biotype_search.group(1)
-	tag_search = re.search(r'tag \"(.+?)\";', info)
-	if tag_search != None:
-		tag = tag_search.group(1)
-	transcript_support_level_search = re.search(r'transcript_support_level \"(.+?)\";', info)
-	if transcript_support_level_search != None:
-		transcript_support_level = transcript_support_level_search.group(1)
-
+	transcript_biotype = None
+	### Now I need to split the info field into a dictionary and put the into the dataframe
+	info_dict = dict(x.split(' "') for x in info.split("; "))
+	### Now update the variables created above if they are present in the info field
+	list_of_variables = [gene_id, gene_version, transcript_id, transcript_version, gene_name, gene_biotype, transcript_name, tag, transcript_support_level, transcript_biotype]
+	list_of_strings = ["gene_id", "gene_version", "transcript_id", "transcript_version", "gene_name", "gene_biotype", "transcript_name", "tag", "transcript_support_level", "transcript_biotype"]
+	for variable, string in zip(list_of_variables, list_of_strings):
+		if string in info_dict:
+			variable = info_dict[string]
+			variable = variable.replace('"', '').replace(';', '')
+		df[string] = variable
 	df['Transcript Length'] = length
-	df["gene_id"] = gene_id
-	df["gene_version"] = gene_version
-	df["transcript_id"] = transcript_id
-	df["transcript_version"] = transcript_version
-	df["gene_name"] = gene_name
-	df["gene_biotype"] = gene_biotype
-	df["transcript_name"] = transcript_name
-	df["transcript_biotype"] = transcript_biotype
-	df["tag"] = tag
-	df["transcript_support_level"] = transcript_support_level
 	return df
 
 
@@ -161,9 +131,9 @@ def parse_exon_info(df):
 	stop = df['Stop']
 	length = (stop - start)+1
 	transcript_id = None
-	transcript_id_search = re.search(r'transcript_id \"(.+?)\";', info)
-	if transcript_id_search != None:
-		transcript_id = transcript_id_search.group(1)
+	info_dict = dict(x.split(' "') for x in info.split("; "))
+	if "transcript_id" in info_dict:
+		transcript_id = info_dict['transcript_id'].replace('"', '').replace(';', '')
 	df['Exonic Length'] = length
 	df['transcript_id'] = transcript_id
 	return df
