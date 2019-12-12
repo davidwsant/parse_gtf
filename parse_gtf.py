@@ -111,9 +111,21 @@ def parse_transcript_info(df):
 	### Now I need to split the info field into a dictionary and put the into the dataframe
 	info_dict = dict(x.split(' "') for x in info.split("; "))
 	### Now update the variables created above if they are present in the info field
+	variable_info = {
+		'gene_id': gene_id,
+		'gene_version': gene_version,
+		'transcript_id': transcript_id,
+		'transcript_version': transcript_version,
+		'gene_name': gene_name,
+		'gene_biotype': gene_biotype,
+		'transcript_name': transcript_name,
+		'tag': tag,
+		'transcript_support_level': transcript_support_level,
+		'transcript_biotype': transcript_biotype
+	}
 	list_of_variables = [gene_id, gene_version, transcript_id, transcript_version, gene_name, gene_biotype, transcript_name, tag, transcript_support_level, transcript_biotype]
 	list_of_strings = ["gene_id", "gene_version", "transcript_id", "transcript_version", "gene_name", "gene_biotype", "transcript_name", "tag", "transcript_support_level", "transcript_biotype"]
-	for variable, string in zip(list_of_variables, list_of_strings):
+	for string, variable in variable_info.items():
 		if string in info_dict:
 			variable = info_dict[string]
 			variable = variable.replace('"', '').replace(';', '')
