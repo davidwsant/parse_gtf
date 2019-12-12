@@ -2,10 +2,10 @@
 This program has been designed to obtain information about transcripts from a
 GTF file. The gtf files that have been used for this can be found on
 the [Ensembl downloads website](https://uswest.ensembl.org/info/data/ftp/index.html).
-This program took approximately 1 hour to process the human gtf file version 98
-from Ensembl using a 2018 MacBook Pro. Suggestions for improving speed are welcome.
+This program took approximately 1 hour and 15 minutes to process the human gtf
+file version 98 from Ensembl using a 2018 MacBook Pro and using the -t and -e options.
 
-A .csv file containing information about each transcript will be
+A comma separated value (.csv) file containing information about each transcript will be
 generated. In addition, if you would like a separate file with the information
 only about the longest transcript per gene or the transcript with the longest
 exonic length, you can specify to have those files created with the -t or -e
