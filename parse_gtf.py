@@ -81,7 +81,7 @@ max_cds = args.max_cds
 
 count = 0
 for i, line in enumerate(open(input_file)):
-	if line.startswith('#!'):
+	if line.startswith('#'):
 		count += 1
 	else:
 		break
@@ -109,7 +109,12 @@ def parse_transcript_info(df):
 	transcript_support_level = None
 	transcript_biotype = None
 	### Now I need to split the info field into a dictionary and put the into the dataframe
-	info_dict = dict(x.split(' "') for x in info.split("; "))
+	info_dict = {}
+	info_list = list(x for x in info.split("; "))
+	for element in info_list:
+		if '"' in element:
+			split_element = element.split(' "')
+			info_dict[split_element[0]] = split_element[1]
 	### Now update the variables created above if they are present in the info field
 	variable_info = {
 		'gene_id': gene_id,
@@ -143,7 +148,12 @@ def parse_exon_info(df):
 	stop = df['Stop']
 	length = (stop - start)+1
 	transcript_id = None
-	info_dict = dict(x.split(' "') for x in info.split("; "))
+	info_dict = {}
+	info_list = list(x for x in info.split("; "))
+	for element in info_list:
+		if '"' in element:
+			split_element = element.split(' "')
+			info_dict[split_element[0]] = split_element[1]
 	if "transcript_id" in info_dict:
 		transcript_id = info_dict['transcript_id'].replace('"', '').replace(';', '')
 	df['CDS Length'] = length
